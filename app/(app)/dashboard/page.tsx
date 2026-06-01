@@ -1,28 +1,9 @@
-import { LayoutDashboard } from 'lucide-react'
-
-import { RoutePage } from '@/components/route-page'
+import { DashboardContent } from '@/components/dashboard'
 
 export default function DashboardPage() {
   return (
-    <RoutePage
-      title="Dashboard"
-      description="Track filing activity, recent updates, and the key actions that need your attention."
-      icon={LayoutDashboard}
-      sections={[
-        {
-          title: 'Overview',
-          body: 'Surface the most important filing metrics and account status at a glance.',
-        },
-        {
-          title: 'Recent activity',
-          body: 'Show recent submissions, profile switches, and filing updates as the app grows.',
-        },
-        {
-          title: 'Next actions',
-          body: 'Guide users toward unfinished filings, searches, and profile maintenance.',
-        },
-      ]}
-    />
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <DashboardContent />
+    </main>
   )
 }
-

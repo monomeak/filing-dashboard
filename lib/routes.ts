@@ -1,39 +1,42 @@
 export const routes = {
-  home: '/',
-  profile: '/profile',
-  dashboard: '/dashboard',
-  filing: '/filing',
-  searchFiling: '/search-filing',
-  createOrganization: '/organizations/new',
-} as const
+  home: "/",
+  profile: "/profile",
+  dashboard: "/dashboard",
+  filing: "/filing",
+  newFiling: "/filing/new",
+  searchFiling: "/search-filing",
 
-export type AppRoute = (typeof routes)[keyof typeof routes]
-export type NavigationIcon = 'user' | 'dashboard' | 'filing' | 'search'
+  createOrganization: "/organizations/new",
+} as const;
+
+export type AppRoute = (typeof routes)[keyof typeof routes];
+export type NavigationIcon = "user" | "dashboard" | "filing" | "search";
 export type NavigationItem = {
-  label: string
-  href: AppRoute
-  icon: NavigationIcon
-}
+  label: string;
+  href: AppRoute;
+  icon: NavigationIcon;
+};
 
 export const primaryNavigation: NavigationItem[] = [
   {
-    label: 'My Profile',
-    href: routes.profile,
-    icon: 'user',
-  },
-  {
-    label: 'Dashboard',
+    label: "Dashboard",
     href: routes.dashboard,
-    icon: 'dashboard',
+    icon: "dashboard",
   },
   {
-    label: 'Filing',
+    label: "My Profile",
+    href: routes.profile,
+    icon: "user",
+  },
+  {
+    label: "My Filing",
     href: routes.filing,
-    icon: 'filing',
+    icon: "filing",
   },
+
   {
-    label: 'Search Filing',
+    label: "Search Filing",
     href: routes.searchFiling,
-    icon: 'search',
+    icon: "search",
   },
-] as const
+] as const;

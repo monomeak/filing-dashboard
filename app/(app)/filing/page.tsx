@@ -1,28 +1,15 @@
-import { FileText } from 'lucide-react'
-
-import { RoutePage } from '@/components/route-page'
+import { FilingPageHeader, FilingWorkspace } from '@/components/filing'
 
 export default function FilingPage() {
   return (
-    <RoutePage
-      title="Filing"
-      description="Create, organize, and manage filing records from a dedicated workflow."
-      icon={FileText}
-      sections={[
-        {
-          title: 'New filing',
-          body: 'Start a filing flow with the information required to submit a complete record.',
-        },
-        {
-          title: 'Drafts',
-          body: 'Keep unfinished filings visible so users can return to them quickly.',
-        },
-        {
-          title: 'Submitted records',
-          body: 'Give users a reliable place to review completed filing history.',
-        },
-      ]}
-    />
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <FilingPageHeader
+        title="My Filing"
+        description="Create, review, and manage draft and paid filing records."
+        action="new-filing"
+      />
+
+      <FilingWorkspace />
+    </main>
   )
 }
-

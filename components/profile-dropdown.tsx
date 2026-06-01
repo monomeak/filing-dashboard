@@ -1,14 +1,14 @@
-'use client'
+"use client";
 
-import { useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from "@/components/ui/dropdown-menu";
 import {
   LogOut,
   User,
@@ -21,86 +21,88 @@ import {
   Building2,
   Menu,
   LoaderCircle,
-} from 'lucide-react'
-import type { ActiveProfile } from '@/lib/profile-data'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { useProfiles } from '@/hooks/use-profiles'
-import { getInitials, personalProfile } from '@/lib/profile-data'
+} from "lucide-react";
+import type { ActiveProfile } from "@/lib/profile-data";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useProfiles } from "@/hooks/use-profiles";
+import { getInitials, personalProfile } from "@/lib/profile-data";
 import {
   primaryNavigation,
   routes,
   type AppRoute,
   type NavigationItem,
-} from '@/lib/routes'
+} from "@/lib/routes";
 
 const navigationIcons = {
   user: User,
   dashboard: LayoutDashboard,
   filing: FileText,
   search: Search,
-}
+};
 
 type ProfileDropdownProps = {
-  navItems?: NavigationItem[]
-}
+  navItems?: NavigationItem[];
+};
 
 export function ProfileDropdown({
   navItems = primaryNavigation,
 }: ProfileDropdownProps) {
-  const router = useRouter()
-  const switchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const [isOpen, setIsOpen] = useState(false)
-  const [view, setView] = useState<'menu' | 'switch'>('menu')
+  const router = useRouter();
+  const switchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [view, setView] = useState<"menu" | "switch">("menu");
   const [switchingProfileId, setSwitchingProfileId] = useState<string | null>(
     null,
-  )
-  const { activeProfile, organizations, switchProfile } = useProfiles()
+  );
+  const { activeProfile, organizations, switchProfile } = useProfiles();
   const profileLabel =
-    activeProfile.type === 'personal' ? 'Personal Profile' : 'Organization Profile'
+    activeProfile.type === "personal"
+      ? "My Profile"
+      : "Organization Profile";
 
   useEffect(() => {
     return () => {
       if (switchTimeoutRef.current) {
-        clearTimeout(switchTimeoutRef.current)
+        clearTimeout(switchTimeoutRef.current);
       }
-    }
-  }, [])
+    };
+  }, []);
 
   const handleOpenChange = (open: boolean) => {
-    setIsOpen(open)
+    setIsOpen(open);
 
     if (!open) {
-      setView('menu')
-      setSwitchingProfileId(null)
+      setView("menu");
+      setSwitchingProfileId(null);
     }
-  }
+  };
 
   const handleNavigation = (path: AppRoute) => {
-    setIsOpen(false)
-    router.push(path)
-  }
+    setIsOpen(false);
+    router.push(path);
+  };
 
   const handleSwitchProfile = (profile: ActiveProfile, profileId: string) => {
     if (switchingProfileId) {
-      return
+      return;
     }
 
-    setSwitchingProfileId(profileId)
+    setSwitchingProfileId(profileId);
 
     switchTimeoutRef.current = setTimeout(() => {
-      switchProfile(profile)
-      setIsOpen(false)
-      setView('menu')
-      setSwitchingProfileId(null)
-      router.push(routes.profile)
-      switchTimeoutRef.current = null
-    }, 450)
-  }
+      switchProfile(profile);
+      setIsOpen(false);
+      setView("menu");
+      setSwitchingProfileId(null);
+      router.push(routes.profile);
+      switchTimeoutRef.current = null;
+    }, 450);
+  };
 
   const handleSignOut = () => {
-    setIsOpen(false)
-    console.log('[v0] User signed out')
-  }
+    setIsOpen(false);
+    console.log("[v0] User signed out");
+  };
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
@@ -113,14 +115,14 @@ export function ProfileDropdown({
           <Avatar className="hidden h-10 w-10 sm:flex">
             <AvatarImage
               src={
-                activeProfile.type === 'personal'
+                activeProfile.type === "personal"
                   ? personalProfile.avatar
                   : undefined
               }
               alt={activeProfile.name}
             />
             <AvatarFallback>
-              {activeProfile.type === 'personal' ? (
+              {activeProfile.type === "personal" ? (
                 activeProfile.initials
               ) : (
                 <Building2 className="h-5 w-5" />
@@ -134,21 +136,21 @@ export function ProfileDropdown({
         sideOffset={8}
         className="w-[calc(100vw-1.5rem)] max-w-72 p-0"
       >
-        {view === 'menu' && (
+        {view === "menu" && (
           <>
             <div className="px-4 py-5 border-b bg-gradient-to-br from-slate-50 to-slate-100 sm:py-6 dark:from-slate-900 dark:to-slate-800">
               <div className="flex flex-col items-center gap-4 text-center">
                 <Avatar className="h-14 w-14 sm:h-16 sm:w-16">
                   <AvatarImage
                     src={
-                      activeProfile.type === 'personal'
+                      activeProfile.type === "personal"
                         ? personalProfile.avatar
                         : undefined
                     }
                     alt={activeProfile.name}
                   />
                   <AvatarFallback>
-                    {activeProfile.type === 'personal' ? (
+                    {activeProfile.type === "personal" ? (
                       activeProfile.initials
                     ) : (
                       <Building2 className="h-6 w-6" />
@@ -159,12 +161,12 @@ export function ProfileDropdown({
                   <h3 className="text-sm font-semibold text-foreground">
                     {activeProfile.name}
                   </h3>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  {/* <p className="mt-1 text-xs text-muted-foreground">
                     {activeProfile.type === 'personal'
                       ? 'Personal profile'
                       : 'Organization profile'}
-                  </p>
-                  {activeProfile.type === 'personal' && (
+                  </p> */}
+                  {activeProfile.type === "personal" && (
                     <div className="mt-3 space-y-1">
                       <p className="text-xs text-muted-foreground">
                         Account {personalProfile.accountNumber}
@@ -180,9 +182,9 @@ export function ProfileDropdown({
 
             <div className="px-2 py-2 sm:py-3">
               {navItems.map((item) => {
-                const Icon = navigationIcons[item.icon]
+                const Icon = navigationIcons[item.icon];
                 const label =
-                  item.href === routes.profile ? profileLabel : item.label
+                  item.href === routes.profile ? profileLabel : item.label;
 
                 return (
                   <DropdownMenuItem
@@ -193,7 +195,7 @@ export function ProfileDropdown({
                     <Icon className="h-4 w-4 text-muted-foreground" />
                     <span>{label}</span>
                   </DropdownMenuItem>
-                )
+                );
               })}
             </div>
 
@@ -201,7 +203,7 @@ export function ProfileDropdown({
 
             <div className="px-2 py-2 sm:py-3">
               <button
-                onClick={() => setView('switch')}
+                onClick={() => setView("switch")}
                 className="flex w-full items-center gap-3 cursor-pointer rounded px-3 py-2.5 text-sm hover:bg-accent text-left sm:py-2"
               >
                 <Building2 className="h-4 w-4 text-muted-foreground" />
@@ -223,11 +225,11 @@ export function ProfileDropdown({
           </>
         )}
 
-        {view === 'switch' && (
+        {view === "switch" && (
           <>
             <div className="px-4 py-4 border-b flex items-center gap-3">
               <button
-                onClick={() => setView('menu')}
+                onClick={() => setView("menu")}
                 className="p-1 hover:bg-accent rounded transition-colors"
                 aria-label="Back to profile menu"
               >
@@ -241,12 +243,12 @@ export function ProfileDropdown({
                 onClick={() => {
                   handleSwitchProfile(
                     {
-                      type: 'personal',
+                      type: "personal",
                       name: personalProfile.name,
                       initials: personalProfile.initials,
                     },
-                    'personal',
-                  )
+                    "personal",
+                  );
                 }}
                 disabled={Boolean(switchingProfileId)}
                 className="flex w-full items-center gap-3 cursor-pointer rounded px-3 py-3 text-sm transition-colors hover:bg-accent disabled:cursor-wait disabled:opacity-70"
@@ -263,20 +265,20 @@ export function ProfileDropdown({
                     {personalProfile.name}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {switchingProfileId === 'personal'
-                      ? 'Switching...'
-                      : 'Personal'}
+                    {switchingProfileId === "personal"
+                      ? "Switching..."
+                      : "Personal"}
                   </p>
                 </div>
-                {switchingProfileId === 'personal' ? (
+                {switchingProfileId === "personal" ? (
                   <LoaderCircle className="h-4 w-4 flex-shrink-0 animate-spin text-muted-foreground" />
-                ) : activeProfile.type === 'personal' ? (
+                ) : activeProfile.type === "personal" ? (
                   <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
                 ) : null}
               </button>
 
               {organizations.map((organization) => {
-                const initials = getInitials(organization.name) || 'O'
+                const initials = getInitials(organization.name) || "O";
 
                 return (
                   <button
@@ -284,13 +286,13 @@ export function ProfileDropdown({
                     onClick={() => {
                       handleSwitchProfile(
                         {
-                          type: 'organization',
+                          type: "organization",
                           id: organization.id,
                           name: organization.name,
                           initials,
                         },
                         organization.id,
-                      )
+                      );
                     }}
                     disabled={Boolean(switchingProfileId)}
                     className="flex w-full items-center gap-3 cursor-pointer rounded px-3 py-3 text-sm transition-colors hover:bg-accent disabled:cursor-wait disabled:opacity-70"
@@ -306,18 +308,18 @@ export function ProfileDropdown({
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {switchingProfileId === organization.id
-                          ? 'Switching...'
-                          : 'Organization'}
+                          ? "Switching..."
+                          : "Organization"}
                       </p>
                     </div>
                     {switchingProfileId === organization.id ? (
                       <LoaderCircle className="h-4 w-4 flex-shrink-0 animate-spin text-muted-foreground" />
-                    ) : activeProfile.type === 'organization' &&
+                    ) : activeProfile.type === "organization" &&
                       activeProfile.id === organization.id ? (
                       <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
                     ) : null}
                   </button>
-                )
+                );
               })}
 
               <DropdownMenuSeparator className="my-2" />
@@ -334,5 +336,5 @@ export function ProfileDropdown({
         )}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

@@ -11,10 +11,10 @@ export type ActiveProfile =
   | { type: "organization"; id: string; name: string; initials: string };
 
 export const personalProfile = {
-  name: "Kylian Mbappe",
+  name: "Leoniel Messi",
   accountNumber: "ACC-1001",
   balance: "$2,450.00",
-  avatar: "mbappe.png",
+  avatar: "messi.png",
   initials: "KM",
 };
 
