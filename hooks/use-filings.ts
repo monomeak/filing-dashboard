@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 
 import {
+  buildFilingTimelineEvents,
   demoFilings,
   type FilingRecord,
   type FilingType,
@@ -62,15 +63,25 @@ function getExpiryDate(value: string) {
 }
 
 function normalizeFilings(filings: FilingRecord[]) {
-  return filings.map((filing, index) => ({
-    ...filing,
-    securingPartyDocumentId:
-      filing.securingPartyDocumentId ?? `12345678${index + 1}`,
-    securedPartyDocumentId:
-      filing.securedPartyDocumentId ?? `12345678${index + 2}`,
-    expiresAt: filing.expiresAt ?? getExpiryDate(filing.createdAt),
-    notes: filing.notes ?? 'Mock filing created from the citizen goods flow.',
-  }))
+  return filings.map((filing, index) => {
+    const normalizedFiling = {
+      ...filing,
+      securingPartyDocumentId:
+        filing.securingPartyDocumentId ?? `12345678${index + 1}`,
+      securedPartyDocumentId:
+        filing.securedPartyDocumentId ?? `12345678${index + 2}`,
+      expiresAt: filing.expiresAt ?? getExpiryDate(filing.createdAt),
+      notes: filing.notes ?? 'Mock filing created from the citizen goods flow.',
+    }
+
+    return {
+      ...normalizedFiling,
+      timelineEvents:
+        normalizedFiling.timelineEvents?.length
+          ? normalizedFiling.timelineEvents
+          : buildFilingTimelineEvents(normalizedFiling),
+    }
+  })
 }
 
 export function useFilings() {
@@ -121,6 +132,7 @@ export function useFilings() {
       securedPartyDocumentId: input.securedPartyDocumentId.trim(),
       notes: input.notes.trim() || 'Mock filing created from the citizen goods flow.',
     }
+    filing.timelineEvents = buildFilingTimelineEvents(filing)
 
     saveFilings([filing, ...filings.filter((item) => item.id !== filing.id)])
 

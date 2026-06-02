@@ -1,3 +1,5 @@
+import type { TimelineEvent } from '@/components/timeline/types'
+
 export type FilingStatus = 'Draft' | 'Paid'
 export type FilingType =
   | 'Creation'
@@ -31,6 +33,7 @@ export type FilingRecord = {
   securingPartyDocumentId: string
   securedPartyDocumentId: string
   notes: string
+  timelineEvents?: TimelineEvent[]
 }
 
 export type FilingCreationTrendItem = {
@@ -116,6 +119,118 @@ function requiresRenewal(filing: FilingRecord, expiresAt: string) {
     filing.type !== 'Certified' &&
     isInRenewalWindow(expiresAt)
   )
+}
+
+function formatTimestamp(date: string, time = '9:00 AM') {
+  return `${date} ${time}`
+}
+
+function buildParty(name: string, idNumber: string) {
+  return {
+    name,
+    type: 'Citizen',
+    idNumber,
+    nameKhmer: 'Heng Bopha',
+    country: 'Cambodia',
+    province: 'Siemreap',
+    district: 'Soutr Nikom',
+    commune: 'Chan Sa',
+    phume: 'Kouk Toeng',
+    streetNumber: 'Street 6',
+  }
+}
+
+export function buildFilingTimelineEvents(filing: FilingRecord): TimelineEvent[] {
+  const loanValue = filing.loanValue.toLocaleString()
+  const baseDetails = {
+    interestType: 'Security Interest',
+    partySize:
+      "The transaction secures the securing party's purchase of personal or household items",
+    contractNumber: filing.id,
+    loanValue,
+    securingParties: [
+      buildParty('Heng Bopha', filing.securingPartyDocumentId),
+    ],
+    securedParties: [
+      buildParty('Sok Dara', filing.securedPartyDocumentId),
+    ],
+    collateral: {
+      type: filing.collateral,
+      description: `Description of ${filing.collateral.toLowerCase()} collateral for ${filing.title}.`,
+      attachments: ['sample-doc.pdf'],
+    },
+  }
+
+  const createEvent: TimelineEvent = {
+    id: `${filing.id}-create`,
+    type: 'create',
+    noticeNumber: filing.id,
+    date: formatTimestamp(filing.createdAt, '9:00 AM'),
+    issuedDate: formatTimestamp(filing.createdAt, '9:00 AM'),
+    expirationDate: formatTimestamp(filing.expiresAt, '9:00 AM'),
+    status: filing.type === 'Creation' ? 'Original Filing' : 'Root Filing',
+    details: baseDetails,
+  }
+
+  if (filing.type === 'Creation' || filing.type === 'Certified') {
+    return [createEvent]
+  }
+
+  const amendmentEvent: TimelineEvent = {
+    ...createEvent,
+    id: `${filing.id}-amendment`,
+    type: 'amendment',
+    noticeNumber: `${filing.id}-A1`,
+    date: formatTimestamp(filing.createdAt, '11:15 AM'),
+    issuedDate: formatTimestamp(filing.createdAt, '11:15 AM'),
+    description: 'Updated party and collateral information',
+    status: filing.status === 'Draft' ? 'Draft Amendment' : undefined,
+  }
+
+  if (filing.type === 'Amendment') {
+    return [createEvent, amendmentEvent]
+  }
+
+  const correctionEvent: TimelineEvent = {
+    ...createEvent,
+    id: `${filing.id}-correction`,
+    type: 'correction',
+    noticeNumber: `${filing.id}-C1`,
+    date: formatTimestamp(filing.createdAt, '2:30 PM'),
+    issuedDate: formatTimestamp(filing.createdAt, '2:30 PM'),
+    description: 'Corrected filing details',
+  }
+
+  if (filing.type === 'Correction') {
+    return [createEvent, amendmentEvent, correctionEvent]
+  }
+
+  const renewalEvent: TimelineEvent = {
+    ...createEvent,
+    id: `${filing.id}-renewal`,
+    type: 'renew',
+    noticeNumber: `${filing.id}-R1`,
+    date: formatTimestamp(filing.createdAt, '4:00 PM'),
+    issuedDate: formatTimestamp(filing.createdAt, '4:00 PM'),
+    newExpirationDate: filing.expiresAt,
+    status: 'Latest Active Filing',
+  }
+
+  if (filing.type === 'Renewal') {
+    return [createEvent, amendmentEvent, correctionEvent, renewalEvent]
+  }
+
+  const terminationEvent: TimelineEvent = {
+    id: `${filing.id}-termination`,
+    type: 'termination',
+    noticeNumber: `${filing.id}-T1`,
+    date: formatTimestamp(filing.createdAt, '5:30 PM'),
+    issuedDate: formatTimestamp(filing.createdAt, '5:30 PM'),
+    status: 'Filing Closed',
+    description: 'Terminated filing after the secured obligation was completed',
+  }
+
+  return [createEvent, amendmentEvent, correctionEvent, terminationEvent]
 }
 
 export function getFilingExpiryItem(filing: FilingRecord): FilingExpiryItem {

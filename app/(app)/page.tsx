@@ -9,7 +9,7 @@ export default function Page() {
       <section className="flex w-full max-w-5xl flex-col items-center gap-10 text-center">
         <div className="space-y-5">
           <p className="text-sm font-medium text-primary">
-            Secured Transactions Filing Office
+            [Secured Transactions Filing Office]
           </p>
 
           <h1 className="text-balance text-3xl font-bold tracking-tight text-foreground sm:text-5xl">

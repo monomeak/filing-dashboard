@@ -4,7 +4,14 @@ import Link from 'next/link'
 import { ArrowLeft, FileText } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import InteractiveTimeline from '@/components/timeline/interactive-timeline'
+import type { TimelineActionName } from '@/components/timeline/timeline-actions'
 import { useFilings } from '@/hooks/use-filings'
+import {
+  buildFilingTimelineEvents,
+  getFilingExpiryItem,
+  type FilingRecord,
+} from '@/lib/demo-filings'
 import { routes } from '@/lib/routes'
 
 type FilingDetailProps = {
@@ -17,7 +24,7 @@ export function FilingDetail({ filingId }: FilingDetailProps) {
 
   if (!filing) {
     return (
-      <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         <Button asChild variant="ghost" className="w-fit">
           <Link href={routes.filing}>
             <ArrowLeft className="h-4 w-4" />
@@ -36,26 +43,13 @@ export function FilingDetail({ filingId }: FilingDetailProps) {
     )
   }
 
-  const details = [
-    { label: 'Contract number', value: filing.id },
-    { label: 'Filing type', value: filing.type },
-    { label: 'Status', value: filing.status },
-    { label: 'Collateral', value: filing.collateral },
-    { label: 'Loan value', value: `$${filing.loanValue.toLocaleString()}` },
-    { label: 'Created at', value: filing.createdAt },
-    { label: 'Created by', value: filing.createdBy },
-    {
-      label: 'Securing party document ID',
-      value: filing.securingPartyDocumentId,
-    },
-    {
-      label: 'Secured party document ID',
-      value: filing.securedPartyDocumentId,
-    },
-  ]
+  const timelineEvents = filing.timelineEvents?.length
+    ? filing.timelineEvents
+    : buildFilingTimelineEvents(filing)
+  const actions = getFilingActions(filing)
 
   return (
-    <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
       <section className="flex flex-col gap-4 border-b pb-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <Button asChild variant="ghost" size="sm" className="-ml-3 mb-2">
@@ -70,9 +64,9 @@ export function FilingDetail({ filingId }: FilingDetailProps) {
             </div>
             <div>
               <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-                {filing.title}
+                {filing.id}
               </h1>
-              <p className="mt-1 text-sm text-muted-foreground">{filing.id}</p>
+            
             </div>
           </div>
         </div>
@@ -81,23 +75,12 @@ export function FilingDetail({ filingId }: FilingDetailProps) {
         </span>
       </section>
 
-      <section className="rounded-lg border bg-card p-5 shadow-sm sm:p-6">
-        <h2 className="text-base font-semibold text-foreground">
-          Filing Details
-        </h2>
-        <dl className="mt-5 grid gap-4 sm:grid-cols-2">
-          {details.map((detail) => (
-            <div key={detail.label} className="rounded-md bg-muted p-4">
-              <dt className="text-xs font-medium text-muted-foreground">
-                {detail.label}
-              </dt>
-              <dd className="mt-2 text-sm font-semibold text-foreground">
-                {detail.value}
-              </dd>
-            </div>
-          ))}
-        </dl>
-      </section>
+      <InteractiveTimeline
+        events={timelineEvents}
+        rootFilingNumber={timelineEvents[0]?.noticeNumber || filing.id}
+        actions={actions}
+        subtitle="Follow this filing from creation through every amendment, correction, renewal, or termination."
+      />
 
       <section className="rounded-lg border bg-card p-5 shadow-sm sm:p-6">
         <h2 className="text-base font-semibold text-foreground">Notes</h2>
@@ -107,4 +90,22 @@ export function FilingDetail({ filingId }: FilingDetailProps) {
       </section>
     </main>
   )
+}
+
+function getFilingActions(filing: FilingRecord): TimelineActionName[] {
+  const expiryStatus = getFilingExpiryItem(filing).status
+
+  if (expiryStatus === 'Expired') {
+    return []
+  }
+
+  if (filing.status === 'Draft') {
+    return ['checkout', 'delete', 'update']
+  }
+
+  if (expiryStatus === 'Expiring Soon') {
+    return ['amend', 'correct', 'renew', 'terminate']
+  }
+
+  return ['amend', 'correct', 'terminate']
 }
