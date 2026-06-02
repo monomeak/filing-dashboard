@@ -1,5 +1,8 @@
-import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+"use client";
+
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import {
   Table,
@@ -8,13 +11,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import type { FilingRecord } from '@/lib/demo-filings'
-import { routes } from '@/lib/routes'
+} from "@/components/ui/table";
+import type { FilingRecord } from "@/lib/demo-filings";
+import { routes } from "@/lib/routes";
 
 type RecentFilingActivityProps = {
-  filings: FilingRecord[]
-}
+  filings: FilingRecord[];
+};
 
 export function RecentFilingActivity({ filings }: RecentFilingActivityProps) {
   return (
@@ -41,7 +44,7 @@ export function RecentFilingActivity({ filings }: RecentFilingActivityProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Filing</TableHead>
+              <TableHead>Draft / Notice number</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Collateral</TableHead>
@@ -58,16 +61,37 @@ export function RecentFilingActivity({ filings }: RecentFilingActivityProps) {
         </Table>
       </div>
     </section>
-  )
+  );
 }
 
 function RecentFilingRow({ filing }: { filing: FilingRecord }) {
+  const router = useRouter();
+  const filingHref = `/filing/${encodeURIComponent(filing.id)}`;
+  const numberLabel =
+    filing.status === "Draft" ? "Draft number" : "Notice number";
+
   return (
-    <TableRow>
+    <TableRow
+      className="cursor-pointer transition-colors hover:bg-muted/50"
+      tabIndex={0}
+      onClick={() => router.push(filingHref)}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          router.push(filingHref);
+        }
+      }}
+      aria-label={`View filing ${filing.id}`}
+    >
       <TableCell className="min-w-64">
         <div>
-          <p className="font-medium text-foreground">{filing.title}</p>
-          <p className="mt-1 text-xs text-muted-foreground">{filing.id}</p>
+          <Link
+            href={filingHref}
+            className="font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            onClick={(event) => event.stopPropagation()}
+          >
+            {filing.id}
+          </Link>
         </div>
       </TableCell>
       <TableCell>{filing.type}</TableCell>
@@ -81,5 +105,5 @@ function RecentFilingRow({ filing }: { filing: FilingRecord }) {
       <TableCell>{filing.createdAt}</TableCell>
       <TableCell>{filing.createdBy}</TableCell>
     </TableRow>
-  )
+  );
 }
