@@ -8,7 +8,7 @@ export function DashboardSkeleton() {
 
       <section className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
         <ChartSkeleton />
-        <SnapshotSkeleton />
+        <ExpiryMonitoringSkeleton />
       </section>
 
       <ActivityTableSkeleton />
@@ -82,22 +82,22 @@ function ChartSkeleton() {
   )
 }
 
-function SnapshotSkeleton() {
+function ExpiryMonitoringSkeleton() {
   return (
     <article className="rounded-lg border bg-card p-5 shadow-sm sm:p-6">
-      <Skeleton className="h-5 w-32" />
-      <div className="mt-5 space-y-4">
-        {Array.from({ length: 4 }).map((_, index) => (
-          <div key={index} className="flex items-center justify-between gap-4">
-            <Skeleton className="h-4 w-28" />
-            <Skeleton className="h-4 w-16" />
-          </div>
-        ))}
+      <div className="flex items-start justify-between gap-4">
+        <div className="space-y-2">
+          <Skeleton className="h-5 w-40" />
+          <Skeleton className="h-4 w-56" />
+        </div>
+        <Skeleton className="h-10 w-10" />
       </div>
-      <div className="mt-6 rounded-md bg-muted p-4">
-        <Skeleton className="h-4 w-36" />
-        <Skeleton className="mt-3 h-4 w-full" />
-        <Skeleton className="mt-2 h-4 w-4/5" />
+
+      <div className="mt-6 space-y-3">
+        <Skeleton className="h-4 w-32" />
+        {Array.from({ length: 4 }).map((_, index) => (
+          <Skeleton key={index} className="h-14 rounded-lg" />
+        ))}
       </div>
     </article>
   )

@@ -26,6 +26,7 @@ export type FilingRecord = {
   securedParties: number
   collateral: string
   createdAt: string
+  expiresAt: string
   createdBy: string
   securingPartyDocumentId: string
   securedPartyDocumentId: string
@@ -35,6 +36,100 @@ export type FilingRecord = {
 export type FilingCreationTrendItem = {
   label: string
   count: number
+}
+
+export type FilingExpiryStatus = 'Expired' | 'Expiring Soon' | 'Active'
+
+export type FilingExpiryItem = {
+  id: string
+  title: string
+  expiresAt: string
+  daysUntilExpiry: number
+  status: FilingExpiryStatus
+  renewalRequired: boolean
+}
+
+const filingLifetimeYears = 5
+const renewalWindowMonths = 6
+const today = new Date()
+today.setHours(0, 0, 0, 0)
+
+function parseDate(value: string) {
+  const date = new Date(value)
+  date.setHours(0, 0, 0, 0)
+  return date
+}
+
+function getDaysUntilExpiry(value: string) {
+  const millisecondsPerDay = 1000 * 60 * 60 * 24
+  return Math.ceil(
+    (parseDate(value).getTime() - today.getTime()) / millisecondsPerDay,
+  )
+}
+
+function getExpiryDate(createdAt: string) {
+  const expiryDate = parseDate(createdAt)
+  expiryDate.setFullYear(expiryDate.getFullYear() + filingLifetimeYears)
+
+  return expiryDate
+}
+
+function getRenewalWindowStart(expiresAt: string) {
+  const renewalWindowStart = parseDate(expiresAt)
+  renewalWindowStart.setMonth(
+    renewalWindowStart.getMonth() - renewalWindowMonths,
+  )
+
+  return renewalWindowStart
+}
+
+function formatDate(value: Date) {
+  return new Intl.DateTimeFormat('en', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(value)
+}
+
+function isInRenewalWindow(expiresAt: string) {
+  return today >= getRenewalWindowStart(expiresAt)
+}
+
+function getExpiryStatus(
+  expiresAt: string,
+  daysUntilExpiry: number,
+): FilingExpiryStatus {
+  if (daysUntilExpiry < 0) {
+    return 'Expired'
+  }
+
+  if (isInRenewalWindow(expiresAt)) {
+    return 'Expiring Soon'
+  }
+
+  return 'Active'
+}
+
+function requiresRenewal(filing: FilingRecord, expiresAt: string) {
+  return (
+    filing.type !== 'Termination' &&
+    filing.type !== 'Certified' &&
+    isInRenewalWindow(expiresAt)
+  )
+}
+
+export function getFilingExpiryItem(filing: FilingRecord): FilingExpiryItem {
+  const expiresAt = formatDate(getExpiryDate(filing.createdAt))
+  const daysUntilExpiry = getDaysUntilExpiry(expiresAt)
+
+  return {
+    id: filing.id,
+    title: filing.title,
+    expiresAt,
+    daysUntilExpiry,
+    status: getExpiryStatus(expiresAt, daysUntilExpiry),
+    renewalRequired: requiresRenewal(filing, expiresAt),
+  }
 }
 
 export const demoFilings: FilingRecord[] = [
@@ -47,7 +142,8 @@ export const demoFilings: FilingRecord[] = [
     securingParties: 1,
     securedParties: 2,
     collateral: 'Goods',
-    createdAt: 'May 30, 2026',
+    createdAt: 'Nov 18, 2021',
+    expiresAt: 'Nov 18, 2026',
     createdBy: 'Disha Patel',
     securingPartyDocumentId: '123456781',
     securedPartyDocumentId: '123456782',
@@ -62,7 +158,8 @@ export const demoFilings: FilingRecord[] = [
     securingParties: 1,
     securedParties: 2,
     collateral: 'Goods',
-    createdAt: 'May 29, 2026',
+    createdAt: 'Nov 28, 2021',
+    expiresAt: 'Nov 28, 2026',
     createdBy: 'Rahul Mehta',
     securingPartyDocumentId: '123456782',
     securedPartyDocumentId: '123456783',
@@ -77,7 +174,8 @@ export const demoFilings: FilingRecord[] = [
     securingParties: 1,
     securedParties: 2,
     collateral: 'Goods',
-    createdAt: 'May 27, 2026',
+    createdAt: 'Jul 24, 2021',
+    expiresAt: 'Jul 24, 2026',
     createdBy: 'Caroline Watson',
     securingPartyDocumentId: '123456783',
     securedPartyDocumentId: '123456784',
@@ -92,7 +190,8 @@ export const demoFilings: FilingRecord[] = [
     securingParties: 1,
     securedParties: 2,
     collateral: 'Goods',
-    createdAt: 'May 25, 2026',
+    createdAt: 'Jun 01, 2021',
+    expiresAt: 'Jun 01, 2026',
     createdBy: 'Disha Patel',
     securingPartyDocumentId: '123456784',
     securedPartyDocumentId: '123456785',
@@ -107,7 +206,8 @@ export const demoFilings: FilingRecord[] = [
     securingParties: 1,
     securedParties: 2,
     collateral: 'Goods',
-    createdAt: 'May 23, 2026',
+    createdAt: 'Jan 30, 2022',
+    expiresAt: 'Jan 30, 2027',
     createdBy: 'Rahul Mehta',
     securingPartyDocumentId: '123456785',
     securedPartyDocumentId: '123456786',
@@ -124,6 +224,10 @@ export const filingCreationTrend: FilingCreationTrendItem[] = [
   { label: 'May 29', count: 4 },
   { label: 'May 30', count: 5 },
 ]
+
+const filingExpiryItems = demoFilings
+  .map(getFilingExpiryItem)
+  .sort((first, second) => first.daysUntilExpiry - second.daysUntilExpiry)
 
 export const filingDashboardMetrics = {
   totalDraft: demoFilings.filter((filing) => filing.status === 'Draft').length,
@@ -155,4 +259,19 @@ export const filingDashboardMetrics = {
     (sum, filing) => sum + filing.securedParties,
     0,
   ),
+  expiryMonitoring: {
+    totalExpired: filingExpiryItems.filter(
+      (filing) => filing.status === 'Expired',
+    ).length,
+    totalExpiringSoon: filingExpiryItems.filter(
+      (filing) => filing.status === 'Expiring Soon',
+    ).length,
+    totalActive: filingExpiryItems.filter(
+      (filing) => filing.status === 'Active',
+    ).length,
+    totalRenewalRequired: filingExpiryItems.filter(
+      (filing) => filing.renewalRequired,
+    ).length,
+    nearestExpiries: filingExpiryItems.slice(0, 3),
+  },
 }

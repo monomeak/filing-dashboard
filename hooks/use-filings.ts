@@ -38,18 +38,27 @@ function readJson<T>(key: string, fallback: T) {
 
 function formatDate(value: string) {
   if (!value) {
-    return new Intl.DateTimeFormat('en', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    }).format(new Date())
+    return formatDisplayDate(new Date())
   }
 
+  return formatDisplayDate(new Date(`${value}T00:00:00`))
+}
+
+function formatDisplayDate(value: Date) {
   return new Intl.DateTimeFormat('en', {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
-  }).format(new Date(`${value}T00:00:00`))
+  }).format(value)
+}
+
+function getExpiryDate(value: string) {
+  const date = value
+    ? new Date(value.includes('-') ? `${value}T00:00:00` : value)
+    : new Date()
+  date.setFullYear(date.getFullYear() + 5)
+
+  return formatDisplayDate(date)
 }
 
 function normalizeFilings(filings: FilingRecord[]) {
@@ -59,6 +68,7 @@ function normalizeFilings(filings: FilingRecord[]) {
       filing.securingPartyDocumentId ?? `12345678${index + 1}`,
     securedPartyDocumentId:
       filing.securedPartyDocumentId ?? `12345678${index + 2}`,
+    expiresAt: filing.expiresAt ?? getExpiryDate(filing.createdAt),
     notes: filing.notes ?? 'Mock filing created from the citizen goods flow.',
   }))
 }
@@ -105,6 +115,7 @@ export function useFilings() {
       securedParties: 1,
       collateral: input.collateral,
       createdAt: formatDate(input.createdAt),
+      expiresAt: getExpiryDate(input.createdAt),
       createdBy: input.createdBy.trim() || 'Disha Patel',
       securingPartyDocumentId: input.securingPartyDocumentId.trim(),
       securedPartyDocumentId: input.securedPartyDocumentId.trim(),

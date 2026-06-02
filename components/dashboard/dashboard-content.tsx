@@ -11,8 +11,8 @@ import {
 import { DashboardHeader } from './dashboard-header'
 import { DashboardSkeleton } from './dashboard-skeleton'
 import { DashboardSummaryCards } from './dashboard-summary-cards'
+import { ExpiryMonitoring } from './expiry-monitoring'
 import { FilingCreationsChart } from './filing-creations-chart'
-import { FilingSnapshot } from './filing-snapshot'
 import { RecentFilingActivity } from './recent-filing-activity'
 
 export function DashboardContent() {
@@ -42,14 +42,10 @@ export function DashboardContent() {
       <section className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
         <FilingCreationsChart trend={filingCreationTrend} />
 
-        <FilingSnapshot
-          totalFilings={demoFilings.length}
-          totalPaidCreation={filingDashboardMetrics.totalPaidCreation}
-          totalPaidOther={filingDashboardMetrics.totalPaidOther}
-          totalPaidTermination={filingDashboardMetrics.totalPaidTermination}
-          totalLoanValue={filingDashboardMetrics.totalLoanValue}
-          totalSecuringParties={filingDashboardMetrics.totalSecuringParties}
-          totalSecuredParties={filingDashboardMetrics.totalSecuredParties}
+        <ExpiryMonitoring
+          nearestExpiries={
+            filingDashboardMetrics.expiryMonitoring.nearestExpiries
+          }
         />
       </section>
 
