@@ -35,7 +35,7 @@ export function DashboardContent() {
       <DashboardSummaryCards
         totalDraft={filingDashboardMetrics.totalDraft}
         totalPaid={filingDashboardMetrics.totalPaid}
-        totalTransactions={filingDashboardMetrics.totalTransactions}
+        totalLoanValue={filingDashboardMetrics.totalLoanValue}
         totalCertifiedSearches={filingDashboardMetrics.totalCertifiedSearches}
       />
 

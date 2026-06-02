@@ -30,8 +30,6 @@ export type FilingRecord = {
   securingPartyDocumentId: string
   securedPartyDocumentId: string
   notes: string
-  certifiedSearches: number
-  transactions: number
 }
 
 export type FilingCreationTrendItem = {
@@ -54,8 +52,6 @@ export const demoFilings: FilingRecord[] = [
     securingPartyDocumentId: '123456781',
     securedPartyDocumentId: '123456782',
     notes: 'Initial creation filing for citizen goods collateral.',
-    certifiedSearches: 2,
-    transactions: 4,
   },
   {
     id: 'CN-CITIZEN-GOODS-2',
@@ -71,8 +67,6 @@ export const demoFilings: FilingRecord[] = [
     securingPartyDocumentId: '123456782',
     securedPartyDocumentId: '123456783',
     notes: 'Draft amendment prepared for review.',
-    certifiedSearches: 1,
-    transactions: 2,
   },
   {
     id: 'CN-CITIZEN-GOODS-3',
@@ -88,8 +82,6 @@ export const demoFilings: FilingRecord[] = [
     securingPartyDocumentId: '123456783',
     securedPartyDocumentId: '123456784',
     notes: 'Paid renewal filing for existing collateral registration.',
-    certifiedSearches: 3,
-    transactions: 5,
   },
   {
     id: 'CN-CITIZEN-GOODS-4',
@@ -105,8 +97,6 @@ export const demoFilings: FilingRecord[] = [
     securingPartyDocumentId: '123456784',
     securedPartyDocumentId: '123456785',
     notes: 'Certified search request draft for citizen goods filing.',
-    certifiedSearches: 2,
-    transactions: 3,
   },
   {
     id: 'CN-CITIZEN-GOODS-5',
@@ -122,8 +112,6 @@ export const demoFilings: FilingRecord[] = [
     securingPartyDocumentId: '123456785',
     securedPartyDocumentId: '123456786',
     notes: 'Paid termination filing for completed citizen goods registration.',
-    certifiedSearches: 0,
-    transactions: 2,
   },
 ]
 
@@ -152,14 +140,9 @@ export const filingDashboardMetrics = {
   totalPaidTermination: demoFilings.filter(
     (filing) => filing.status === 'Paid' && filing.type === 'Termination',
   ).length,
-  totalTransactions: demoFilings.reduce(
-    (sum, filing) => sum + filing.transactions,
-    0,
-  ),
-  totalCertifiedSearches: demoFilings.reduce(
-    (sum, filing) => sum + filing.certifiedSearches,
-    0,
-  ),
+  totalCertifiedSearches: demoFilings.filter(
+    (filing) => filing.type === 'Certified',
+  ).length,
   totalLoanValue: demoFilings.reduce(
     (sum, filing) => sum + filing.loanValue,
     0,

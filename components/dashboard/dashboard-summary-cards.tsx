@@ -1,64 +1,54 @@
-import type { LucideIcon } from 'lucide-react'
-import { FileClock, FileText, ReceiptText, SearchCheck } from 'lucide-react'
-
-import { cn } from '@/lib/utils'
+import type { LucideIcon } from "lucide-react";
+import { CircleDashed, FileText, HandCoins, SearchCheck } from "lucide-react";
 
 type SummaryCard = {
-  label: string
-  value: number
-  detail: string
-  icon: LucideIcon
-  iconClassName: string
-  iconWrapClassName: string
-}
+  label: string;
+  value: string;
+  detail: string;
+  icon: LucideIcon;
+};
 
 type DashboardSummaryCardsProps = {
-  totalDraft: number
-  totalPaid: number
-  totalTransactions: number
-  totalCertifiedSearches: number
-}
+  totalDraft: number;
+  totalPaid: number;
+  totalLoanValue: number;
+  totalCertifiedSearches: number;
+};
+
+const numberFormatter = new Intl.NumberFormat("en-US");
 
 export function DashboardSummaryCards({
   totalDraft,
   totalPaid,
-  totalTransactions,
+  totalLoanValue,
   totalCertifiedSearches,
 }: DashboardSummaryCardsProps) {
   const cards: SummaryCard[] = [
     {
-      label: 'Draft filings',
-      value: totalDraft,
-      detail: 'Need review before submission',
-      icon: FileClock,
-      iconClassName: 'text-amber-600',
-      iconWrapClassName: 'bg-amber-50',
+      label: "Draft Filings",
+      value: numberFormatter.format(totalDraft),
+      detail: "Awaiting finalization",
+      icon: CircleDashed,
     },
     {
-      label: 'Paid filings',
-      value: totalPaid,
-      detail: 'Paid records in the lifecycle',
+      label: "Paid Filings",
+      value: numberFormatter.format(totalPaid),
+      detail: "Completed filings in the registry",
       icon: FileText,
-      iconClassName: 'text-emerald-600',
-      iconWrapClassName: 'bg-emerald-50',
     },
     {
-      label: 'Transactions',
-      value: totalTransactions,
-      detail: 'Created from filing activity',
-      icon: ReceiptText,
-      iconClassName: 'text-sky-600',
-      iconWrapClassName: 'bg-sky-50',
+      label: "Total Loan Value",
+      value: numberFormatter.format(totalLoanValue),
+      detail: "Aggregate declared loan value",
+      icon: HandCoins,
     },
     {
-      label: 'Certified searches',
-      value: totalCertifiedSearches,
-      detail: 'Search filings issued',
+      label: "Certified Searches",
+      value: numberFormatter.format(totalCertifiedSearches),
+      detail: "Certified search results issued",
       icon: SearchCheck,
-      iconClassName: 'text-violet-600',
-      iconWrapClassName: 'bg-violet-50',
     },
-  ]
+  ];
 
   return (
     <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -66,33 +56,31 @@ export function DashboardSummaryCards({
         <SummaryCardItem key={card.label} card={card} />
       ))}
     </section>
-  )
+  );
 }
 
 function SummaryCardItem({ card }: { card: SummaryCard }) {
-  const Icon = card.icon
+  const Icon = card.icon;
 
   return (
-    <article className="rounded-lg border bg-card p-5 shadow-sm">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-sm font-medium text-muted-foreground">
+    <article className="group rounded-lg border border-border/80 bg-card p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <h3 className="truncate text-base font-semibold text-muted-foreground">
             {card.label}
-          </p>
-          <p className="mt-3 text-3xl font-semibold tracking-tight text-foreground">
+          </h3>
+          <p className="mt-3 text-3xl font-bold tracking-tight text-foreground">
             {card.value}
           </p>
         </div>
-        <div
-          className={cn(
-            'flex h-10 w-10 shrink-0 items-center justify-center rounded-md',
-            card.iconWrapClassName,
-          )}
-        >
-          <Icon className={cn('h-5 w-5', card.iconClassName)} />
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border bg-muted/50 text-muted-foreground transition-colors group-hover:bg-primary/10 group-hover:text-slate-600 dark:group-hover:text-slate-300">
+          <Icon className="h-5 w-5" />
         </div>
       </div>
-      <p className="mt-4 text-sm text-muted-foreground">{card.detail}</p>
+      <div className="mt-5 h-1 w-10 rounded-full bg-primary/80" />
+      <p className="mt-3 text-sm leading-5 text-muted-foreground">
+        {card.detail}
+      </p>
     </article>
-  )
+  );
 }

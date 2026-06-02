@@ -109,8 +109,6 @@ export function useFilings() {
       securingPartyDocumentId: input.securingPartyDocumentId.trim(),
       securedPartyDocumentId: input.securedPartyDocumentId.trim(),
       notes: input.notes.trim() || 'Mock filing created from the citizen goods flow.',
-      certifiedSearches: input.type === 'Certified' ? 1 : 0,
-      transactions: 1,
     }
 
     saveFilings([filing, ...filings.filter((item) => item.id !== filing.id)])
