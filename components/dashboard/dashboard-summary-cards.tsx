@@ -1,11 +1,16 @@
-import type { LucideIcon } from "lucide-react";
-import { CircleDashed, FileText, HandCoins, SearchCheck } from "lucide-react";
+import type { ComponentType } from "react";
+import {
+  DollarCircleOutlined,
+  FileDoneOutlined,
+  FolderOpenOutlined,
+  FormOutlined,
+} from "@ant-design/icons";
 
 type SummaryCard = {
   label: string;
   value: string;
   detail: string;
-  icon: LucideIcon;
+  icon: ComponentType<{ className?: string }>;
 };
 
 type DashboardSummaryCardsProps = {
@@ -28,25 +33,25 @@ export function DashboardSummaryCards({
       label: "Draft Filings",
       value: numberFormatter.format(totalDraft),
       detail: "Awaiting finalization",
-      icon: CircleDashed,
+      icon: FormOutlined,
     },
     {
       label: "Paid Filings",
       value: numberFormatter.format(totalPaid),
       detail: "Completed filings in the registry",
-      icon: FileText,
+      icon: FolderOpenOutlined,
     },
     {
       label: "Total Loan Value",
       value: numberFormatter.format(totalLoanValue),
       detail: "Aggregate declared loan value",
-      icon: HandCoins,
+      icon: DollarCircleOutlined,
     },
     {
       label: "Certified Searches",
       value: numberFormatter.format(totalCertifiedSearches),
       detail: "Certified search results issued",
-      icon: SearchCheck,
+      icon: FileDoneOutlined,
     },
   ];
 

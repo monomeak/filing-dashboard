@@ -1,9 +1,9 @@
-import type { LucideIcon } from 'lucide-react'
+import type { ComponentType } from 'react'
 
 type RoutePageProps = {
   title: string
   description: string
-  icon: LucideIcon
+  icon: ComponentType<{ className?: string }>
   sections: {
     title: string
     body: string

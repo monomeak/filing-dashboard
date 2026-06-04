@@ -1,13 +1,29 @@
-import { TrendingUp } from 'lucide-react'
+import {
+  FallOutlined as TrendingDown,
+  MinusOutlined,
+  RiseOutlined as TrendingUp,
+} from '@ant-design/icons'
 
 import type { FilingCreationTrendItem } from '@/lib/demo-filings'
 
 type FilingCreationsChartProps = {
   trend: FilingCreationTrendItem[]
+  previousWeekCount: number
 }
 
-export function FilingCreationsChart({ trend }: FilingCreationsChartProps) {
+export function FilingCreationsChart({
+  trend,
+  previousWeekCount,
+}: FilingCreationsChartProps) {
   const maxTrendCount = Math.max(...trend.map((item) => item.count))
+  const thisWeekCount = trend.reduce((sum, item) => sum + item.count, 0)
+  const weeklyChange = getWeeklyChange(thisWeekCount, previousWeekCount)
+  const TrendIcon =
+    weeklyChange.direction === 'up'
+      ? TrendingUp
+      : weeklyChange.direction === 'down'
+        ? TrendingDown
+        : MinusOutlined
 
   return (
     <article className="rounded-lg border bg-card p-5 shadow-sm sm:p-6">
@@ -21,8 +37,8 @@ export function FilingCreationsChart({ trend }: FilingCreationsChartProps) {
           </p>
         </div>
         <div className="inline-flex items-center gap-2 rounded-md bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
-          <TrendingUp className="h-4 w-4" />
-          +42% this week
+          <TrendIcon className="h-4 w-4" />
+          {weeklyChange.label}
         </div>
       </div>
 
@@ -33,6 +49,29 @@ export function FilingCreationsChart({ trend }: FilingCreationsChartProps) {
       </div>
     </article>
   )
+}
+
+function getWeeklyChange(thisWeekCount: number, previousWeekCount: number) {
+  if (previousWeekCount === 0) {
+    return {
+      direction: thisWeekCount > 0 ? 'up' : 'flat',
+      label:
+        thisWeekCount > 0
+          ? `${thisWeekCount} filings this week`
+          : 'No filings this week',
+    } as const
+  }
+
+  const percentage = Math.round(
+    ((thisWeekCount - previousWeekCount) / previousWeekCount) * 100,
+  )
+  const sign = percentage > 0 ? '+' : ''
+
+  return {
+    direction:
+      percentage > 0 ? 'up' : percentage < 0 ? 'down' : 'flat',
+    label: `${sign}${percentage}% this week`,
+  } as const
 }
 
 function TrendBar({

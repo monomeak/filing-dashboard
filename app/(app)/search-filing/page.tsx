@@ -1,4 +1,6 @@
-import { Search } from 'lucide-react'
+'use client'
+
+import { SearchOutlined as Search } from '@ant-design/icons'
 
 import { RoutePage } from '@/components/route-page'
 
@@ -25,4 +27,3 @@ export default function SearchFilingPage() {
     />
   )
 }
-

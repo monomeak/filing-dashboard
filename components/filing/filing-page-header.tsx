@@ -1,5 +1,10 @@
+'use client'
+
 import Link from 'next/link'
-import { FileText, Plus } from 'lucide-react'
+import {
+  FileTextOutlined as FileText,
+  PlusOutlined as Plus,
+} from '@ant-design/icons'
 
 import { Button } from '@/components/ui/button'
 import { routes } from '@/lib/routes'

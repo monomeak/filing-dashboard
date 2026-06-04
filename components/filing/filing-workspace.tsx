@@ -1,6 +1,9 @@
 'use client'
 
-import { RotateCcw, Search } from 'lucide-react'
+import {
+  ReloadOutlined as RotateCcw,
+  SearchOutlined as Search,
+} from '@ant-design/icons'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { useMemo, useState } from 'react'

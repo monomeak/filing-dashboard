@@ -1,4 +1,4 @@
-import { FileText } from 'lucide-react';
+import { FileTextOutlined as FileText } from '@ant-design/icons';
 
 import { typeConfig } from './timeline-style';
 import type { TimelineEvent, TimelineParty } from './types';

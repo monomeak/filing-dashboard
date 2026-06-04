@@ -1,5 +1,8 @@
 import Link from "next/link";
-import { LayoutDashboard, Plus } from "lucide-react";
+import {
+  DashboardOutlined as LayoutDashboard,
+  PlusOutlined as Plus,
+} from "@ant-design/icons";
 
 import { routes } from "@/lib/routes";
 

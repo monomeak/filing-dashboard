@@ -10,19 +10,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  LogOut,
-  User,
-  FileText,
-  LayoutDashboard,
-  Search,
-  ChevronLeft,
-  Plus,
-  Check,
-  Building2,
-  Menu,
-  LoaderCircle,
-  Repeat,
-} from "lucide-react";
+  BankOutlined as Building2,
+  CheckOutlined as Check,
+  DashboardOutlined as LayoutDashboard,
+  FileTextOutlined as FileText,
+  LeftOutlined as ChevronLeft,
+  LoadingOutlined as LoaderCircle,
+  LogoutOutlined as LogOut,
+  MenuOutlined as Menu,
+  PlusOutlined as Plus,
+  SearchOutlined as Search,
+  SwapOutlined as Repeat,
+  UserOutlined as User,
+} from "@ant-design/icons";
 import type { ActiveProfile } from "@/lib/profile-data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useProfiles } from "@/hooks/use-profiles";
@@ -57,9 +57,7 @@ export function ProfileDropdown({
   );
   const { activeProfile, organizations, switchProfile } = useProfiles();
   const profileLabel =
-    activeProfile.type === "personal"
-      ? "My Profile"
-      : "Organization Profile";
+    activeProfile.type === "personal" ? "My Profile" : "Organization Profile";
 
   useEffect(() => {
     return () => {
@@ -109,11 +107,13 @@ export function ProfileDropdown({
     <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <button
-          className="flex h-11 w-11 items-center justify-center rounded-lg border bg-background shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/20 hover:bg-accent hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:rounded-full sm:border-0"
+          className="flex h-11 w-11 items-center justify-center rounded-lg border bg-background shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/20 hover:bg-accent hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:rounded-full md:border-0"
           aria-label="Open profile menu"
         >
-          <Menu className="h-5 w-5 text-foreground sm:hidden" />
-          <Avatar className="hidden h-11 w-11 ring-2 ring-background shadow-sm sm:flex">
+          <span className="flex md:hidden">
+            <Menu className="h-5 w-5 text-foreground" />
+          </span>
+          <Avatar className="hidden h-11 w-11 ring-2 ring-background shadow-sm md:flex">
             <AvatarImage
               src={
                 activeProfile.type === "personal"
@@ -135,7 +135,7 @@ export function ProfileDropdown({
       <DropdownMenuContent
         align="end"
         sideOffset={8}
-        className="w-[calc(100vw-1.5rem)] max-w-80 overflow-hidden rounded-xl border bg-popover p-0 shadow-xl shadow-slate-900/10 dark:shadow-black/30"
+        className="w-[calc(100vw-1.5rem)] max-w-80 overflow-hidden rounded-xl border bg-popover p-0 shadow-xl shadow-slate-900/10 md:w-80 dark:shadow-black/30"
       >
         {view === "menu" && (
           <>
@@ -181,7 +181,7 @@ export function ProfileDropdown({
               </div>
             </div>
 
-            <div className="px-2.5 py-2.5 sm:py-3">
+            <div className="px-2.5 py-2.5">
               {navItems.map((item) => {
                 const Icon = navigationIcons[item.icon];
                 const label =
@@ -191,10 +191,10 @@ export function ProfileDropdown({
                   <DropdownMenuItem
                     key={item.href}
                     onSelect={() => handleNavigation(item.href)}
-                    className="group flex cursor-pointer items-center gap-3 rounded-lg px-3 py-3 text-base font-medium transition-colors hover:bg-accent focus:bg-accent sm:py-2.5"
+                    className="group flex cursor-pointer items-center gap-3 rounded-lg px-3 py-3 text-base font-medium transition-colors hover:bg-accent focus:bg-accent"
                   >
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors group-hover:bg-background group-hover:text-foreground">
-                      <Icon className="h-[18px] w-[18px]" />
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground leading-none transition-colors group-hover:bg-background group-hover:text-foreground">
+                      <Icon className="flex h-[18px] w-[18px] items-center justify-center" />
                     </span>
                     <span>{label}</span>
                   </DropdownMenuItem>
@@ -209,8 +209,8 @@ export function ProfileDropdown({
                 onClick={() => setView("switch")}
                 className="group flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-3 text-left text-base font-semibold transition-colors hover:bg-accent sm:py-2.5"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors group-hover:bg-background">
-                  <Repeat className="h-[18px] w-[18px]" />
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary leading-none transition-colors group-hover:bg-background">
+                  <Repeat className="flex h-[18px] w-[18px] items-center justify-center" />
                 </span>
 
                 <span>Switch Profile</span>
@@ -224,8 +224,8 @@ export function ProfileDropdown({
                 onSelect={handleSignOut}
                 className="group flex cursor-pointer items-center gap-3 rounded-lg px-3 py-3 text-base font-semibold text-destructive transition-colors hover:bg-destructive/10 hover:text-destructive focus:bg-destructive/10 focus:text-destructive sm:py-2.5"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-destructive/10 text-destructive">
-                  <LogOut className="h-[18px] w-[18px]" />
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-destructive/10 text-destructive leading-none">
+                  <LogOut className="flex h-[18px] w-[18px] items-center justify-center" />
                 </span>
                 <span>Sign out</span>
               </DropdownMenuItem>

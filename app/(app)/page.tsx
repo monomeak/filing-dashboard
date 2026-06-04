@@ -1,5 +1,11 @@
+'use client'
+
 import Link from "next/link";
-import { FileText, Search, ShieldCheck } from "lucide-react";
+import {
+  FileTextOutlined as FileText,
+  SafetyCertificateOutlined as ShieldCheck,
+  SearchOutlined as Search,
+} from "@ant-design/icons";
 
 import { primaryNavigation } from "@/lib/routes";
 

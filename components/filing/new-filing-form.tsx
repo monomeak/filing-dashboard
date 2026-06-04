@@ -4,7 +4,10 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Save } from 'lucide-react'
+import {
+  ArrowLeftOutlined as ArrowLeft,
+  SaveOutlined as Save,
+} from '@ant-design/icons'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'

@@ -1,6 +1,9 @@
 'use client'
 
-import { Building2, User } from 'lucide-react'
+import {
+  BankOutlined as Building2,
+  UserOutlined as User,
+} from '@ant-design/icons'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useProfiles } from '@/hooks/use-profiles'

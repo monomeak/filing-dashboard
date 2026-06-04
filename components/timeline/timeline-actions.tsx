@@ -1,12 +1,12 @@
 import {
-  Check,
-  CreditCard,
-  MoreHorizontal,
-  Pencil,
-  RotateCcw,
-  Trash2,
-  X,
-} from "lucide-react";
+  CheckOutlined as Check,
+  CloseOutlined as X,
+  CreditCardOutlined as CreditCard,
+  DeleteOutlined as Trash2,
+  EditOutlined as Pencil,
+  MoreOutlined as MoreHorizontal,
+  ReloadOutlined as RotateCcw,
+} from "@ant-design/icons";
 import type { ComponentType, RefObject } from "react";
 
 import { cn } from "@/lib/utils";

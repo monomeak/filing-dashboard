@@ -6,6 +6,7 @@ import {
   demoFilings,
   filingCreationTrend,
   filingDashboardMetrics,
+  previousWeekFilingCreationCount,
 } from '@/lib/demo-filings'
 
 import { DashboardHeader } from './dashboard-header'
@@ -40,7 +41,10 @@ export function DashboardContent() {
       />
 
       <section className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
-        <FilingCreationsChart trend={filingCreationTrend} />
+        <FilingCreationsChart
+          trend={filingCreationTrend}
+          previousWeekCount={previousWeekFilingCreationCount}
+        />
 
         <ExpiryMonitoring
           nearestExpiries={

@@ -1,8 +1,8 @@
-import { Loader2Icon } from 'lucide-react'
+import { LoadingOutlined as Loader2Icon } from '@ant-design/icons'
 
 import { cn } from '@/lib/utils'
 
-function Spinner({ className, ...props }: React.ComponentProps<'svg'>) {
+function Spinner({ className, ...props }: React.ComponentProps<'span'>) {
   return (
     <Loader2Icon
       role="status"

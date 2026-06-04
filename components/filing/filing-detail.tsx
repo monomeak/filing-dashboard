@@ -1,7 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowLeft, FileText } from 'lucide-react'
+import {
+  ArrowLeftOutlined as ArrowLeft,
+  FileTextOutlined as FileText,
+} from '@ant-design/icons'
 
 import { Button } from '@/components/ui/button'
 import InteractiveTimeline from '@/components/timeline/interactive-timeline'

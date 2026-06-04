@@ -2,10 +2,10 @@
 
 import * as React from 'react'
 import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from 'lucide-react'
+  DownOutlined as ChevronDownIcon,
+  LeftOutlined as ChevronLeftIcon,
+  RightOutlined as ChevronRightIcon,
+} from '@ant-design/icons'
 import { DayButton, DayPicker, getDefaultClassNames } from 'react-day-picker'
 
 import { cn } from '@/lib/utils'

@@ -1,9 +1,9 @@
 import * as React from 'react'
 import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  MoreHorizontalIcon,
-} from 'lucide-react'
+  LeftOutlined as ChevronLeftIcon,
+  MoreOutlined as MoreHorizontalIcon,
+  RightOutlined as ChevronRightIcon,
+} from '@ant-design/icons'
 
 import { cn } from '@/lib/utils'
 import { Button, buttonVariants } from '@/components/ui/button'

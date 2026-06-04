@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { GripVerticalIcon } from 'lucide-react'
+import { HolderOutlined as GripVerticalIcon } from '@ant-design/icons'
 import * as ResizablePrimitive from 'react-resizable-panels'
 
 import { cn } from '@/lib/utils'

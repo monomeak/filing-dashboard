@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import { Command as CommandPrimitive } from 'cmdk'
-import { SearchIcon } from 'lucide-react'
+import { SearchOutlined as SearchIcon } from '@ant-design/icons'
 
 import { cn } from '@/lib/utils'
 import {

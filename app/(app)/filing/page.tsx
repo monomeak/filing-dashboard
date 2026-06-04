@@ -1,4 +1,7 @@
-import { FilingPageHeader, FilingWorkspace } from '@/components/filing'
+import { Suspense } from 'react'
+
+import { FilingPageHeader } from '@/components/filing/filing-page-header'
+import { FilingWorkspace } from '@/components/filing/filing-workspace'
 
 export default function FilingPage() {
   return (
@@ -9,7 +12,15 @@ export default function FilingPage() {
         action="new-filing"
       />
 
-      <FilingWorkspace />
+      <Suspense
+        fallback={
+          <section className="rounded-lg border bg-card p-5 text-sm text-muted-foreground shadow-sm">
+            Loading filing records...
+          </section>
+        }
+      >
+        <FilingWorkspace />
+      </Suspense>
     </main>
   )
 }

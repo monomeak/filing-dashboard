@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Building2 } from 'lucide-react'
+import { BankOutlined as Building2 } from '@ant-design/icons'
 
 import { useProfiles } from '@/hooks/use-profiles'
 import { routes } from '@/lib/routes'

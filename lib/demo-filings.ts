@@ -340,6 +340,8 @@ export const filingCreationTrend: FilingCreationTrendItem[] = [
   { label: 'May 30', count: 5 },
 ]
 
+export const previousWeekFilingCreationCount = 12
+
 const filingExpiryItems = demoFilings
   .map(getFilingExpiryItem)
   .sort((first, second) => first.daysUntilExpiry - second.daysUntilExpiry)

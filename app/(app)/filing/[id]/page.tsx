@@ -1,4 +1,4 @@
-import { FilingDetail } from '@/components/filing'
+import { FilingDetail } from '@/components/filing/filing-detail'
 
 type FilingDetailPageProps = {
   params: Promise<{
