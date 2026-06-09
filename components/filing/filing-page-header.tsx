@@ -1,19 +1,19 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
+import Link from "next/link";
 import {
   FileTextOutlined as FileText,
   PlusOutlined as Plus,
-} from '@ant-design/icons'
+} from "@ant-design/icons";
 
-import { Button } from '@/components/ui/button'
-import { routes } from '@/lib/routes'
+import { Button } from "@/components/ui/button";
+import { routes } from "@/lib/routes";
 
 type FilingPageHeaderProps = {
-  title: string
-  description: string
-  action?: 'new-filing'
-}
+  title: string;
+  description: string;
+  action?: "new-filing";
+};
 
 export function FilingPageHeader({
   title,
@@ -35,15 +35,6 @@ export function FilingPageHeader({
           </p>
         </div>
       </div>
-
-      {action === 'new-filing' && (
-        <Button asChild>
-          <Link href={routes.newFiling}>
-            <Plus className="h-4 w-4" />
-            New Filing
-          </Link>
-        </Button>
-      )}
     </section>
-  )
+  );
 }

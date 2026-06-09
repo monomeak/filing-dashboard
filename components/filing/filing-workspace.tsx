@@ -1,165 +1,186 @@
-'use client'
+"use client";
 
 import {
   ReloadOutlined as RotateCcw,
   SearchOutlined as Search,
-} from '@ant-design/icons'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import type { ReactNode } from 'react'
-import { useMemo, useState } from 'react'
+} from "@ant-design/icons";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import type { ReactNode } from "react";
+import { useMemo, useState } from "react";
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import {
+  FileTextOutlined as FileText,
+  PlusOutlined as Plus,
+} from "@ant-design/icons";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { useFilings } from '@/hooks/use-filings'
-import { getFilingExpiryItem } from '@/lib/demo-filings'
+} from "@/components/ui/select";
+import { useFilings } from "@/hooks/use-filings";
+import { getFilingExpiryItem } from "@/lib/demo-filings";
 
-import {
-  FilingStatusTabs,
-  type FilingFilter,
-} from './filing-status-tabs'
+import { FilingStatusTabs, type FilingFilter } from "./filing-status-tabs";
+import Link from "next/link";
+import { routes } from "@/lib/routes";
 
 const filingFilters: FilingFilter[] = [
-  'Draft',
-  'Paid',
-  'expiring-soon',
-  'expired',
-]
+  "Draft",
+  "Paid",
+  "expiring-soon",
+  "expired",
+];
 
 type FilingFilterForm = {
-  number: string
-  collateral: string
-  issuedFrom: string
-  issuedTo: string
-  expiredFrom: string
-  expiredTo: string
-  createdBy: string
-}
+  number: string;
+  collateral: string;
+  issuedFrom: string;
+  issuedTo: string;
+  expiredFrom: string;
+  expiredTo: string;
+  createdBy: string;
+};
 
 const initialFilterForm: FilingFilterForm = {
-  number: '',
-  collateral: 'all',
-  issuedFrom: '',
-  issuedTo: '',
-  expiredFrom: '',
-  expiredTo: '',
-  createdBy: '',
-}
+  number: "",
+  collateral: "all",
+  issuedFrom: "",
+  issuedTo: "",
+  expiredFrom: "",
+  expiredTo: "",
+  createdBy: "",
+};
 
 function parseDate(value: string) {
   if (!value) {
-    return null
+    return null;
   }
 
-  const date = new Date(value.includes('-') ? `${value}T00:00:00` : value)
-  date.setHours(0, 0, 0, 0)
+  const date = new Date(value.includes("-") ? `${value}T00:00:00` : value);
+  date.setHours(0, 0, 0, 0);
 
-  return date
+  return date;
 }
 
 function isWithinDateRange(value: string, from: string, to: string) {
-  const date = parseDate(value)
-  const fromDate = parseDate(from)
-  const toDate = parseDate(to)
+  const date = parseDate(value);
+  const fromDate = parseDate(from);
+  const toDate = parseDate(to);
 
   if (!date) {
-    return false
+    return false;
   }
 
   if (fromDate && date < fromDate) {
-    return false
+    return false;
   }
 
   if (toDate && date > toDate) {
-    return false
+    return false;
   }
 
-  return true
+  return true;
 }
 
+type FilingPageHeaderProps = {
+  title: string;
+  description: string;
+  action?: "new-filing";
+};
+
 export function FilingWorkspace() {
-  const { filings } = useFilings()
-  const pathname = usePathname()
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const [filters, setFilters] = useState<FilingFilterForm>(initialFilterForm)
-  const filterParam = searchParams.get('filter')
+  const { filings } = useFilings();
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [filters, setFilters] = useState<FilingFilterForm>(initialFilterForm);
+  const filterParam = searchParams.get("filter");
   const activeFilter = filingFilters.includes(filterParam as FilingFilter)
     ? (filterParam as FilingFilter)
-    : 'Draft'
+    : "Draft";
 
   const collateralTypes = useMemo(
     () => Array.from(new Set(filings.map((filing) => filing.collateral))),
     [filings],
-  )
+  );
 
   const numberLabel =
-    activeFilter === 'Draft' ? 'Draft number' : 'Notice number'
+    activeFilter === "Draft" ? "Draft number" : "Notice number";
   const hasActiveFilters = Object.entries(filters).some(([key, value]) =>
-    key === 'collateral' ? value !== 'all' : Boolean(value),
-  )
+    key === "collateral" ? value !== "all" : Boolean(value),
+  );
 
   const filteredFilings = useMemo(() => {
-    const numberQuery = filters.number.trim().toLowerCase()
-    const createdByQuery = filters.createdBy.trim().toLowerCase()
+    const numberQuery = filters.number.trim().toLowerCase();
+    const createdByQuery = filters.createdBy.trim().toLowerCase();
 
     return filings.filter((filing) => {
-      const expiry = getFilingExpiryItem(filing)
+      const expiry = getFilingExpiryItem(filing);
 
       if (numberQuery && !filing.id.toLowerCase().includes(numberQuery)) {
-        return false
+        return false;
       }
 
-      if (filters.collateral !== 'all' && filing.collateral !== filters.collateral) {
-        return false
+      if (
+        filters.collateral !== "all" &&
+        filing.collateral !== filters.collateral
+      ) {
+        return false;
       }
 
       if (
         (filters.issuedFrom || filters.issuedTo) &&
-        !isWithinDateRange(filing.createdAt, filters.issuedFrom, filters.issuedTo)
+        !isWithinDateRange(
+          filing.createdAt,
+          filters.issuedFrom,
+          filters.issuedTo,
+        )
       ) {
-        return false
+        return false;
       }
 
       if (
         (filters.expiredFrom || filters.expiredTo) &&
-        !isWithinDateRange(expiry.expiresAt, filters.expiredFrom, filters.expiredTo)
+        !isWithinDateRange(
+          expiry.expiresAt,
+          filters.expiredFrom,
+          filters.expiredTo,
+        )
       ) {
-        return false
+        return false;
       }
 
       if (
         createdByQuery &&
         !filing.createdBy.toLowerCase().includes(createdByQuery)
       ) {
-        return false
+        return false;
       }
 
-      return true
-    })
-  }, [filings, filters])
+      return true;
+    });
+  }, [filings, filters]);
 
   const handleFilterChange = (filter: FilingFilter) => {
-    const params = new URLSearchParams(searchParams.toString())
+    const params = new URLSearchParams(searchParams.toString());
 
-    if (filter === 'Draft') {
-      params.delete('filter')
+    if (filter === "Draft") {
+      params.delete("filter");
     } else {
-      params.set('filter', filter)
+      params.set("filter", filter);
     }
 
-    const query = params.toString()
+    const query = params.toString();
     router.replace(query ? `${pathname}?${query}` : pathname, {
       scroll: false,
-    })
-  }
+    });
+  };
 
   const updateFilter = <Key extends keyof FilingFilterForm>(
     key: Key,
@@ -168,8 +189,8 @@ export function FilingWorkspace() {
     setFilters((current) => ({
       ...current,
       [key]: value,
-    }))
-  }
+    }));
+  };
 
   return (
     <section className="overflow-hidden rounded-lg border bg-card shadow-sm">
@@ -203,7 +224,7 @@ export function FilingWorkspace() {
               <Input
                 id="filing-number-filter"
                 value={filters.number}
-                onChange={(event) => updateFilter('number', event.target.value)}
+                onChange={(event) => updateFilter("number", event.target.value)}
                 placeholder={numberLabel}
                 className="pl-9"
               />
@@ -213,7 +234,7 @@ export function FilingWorkspace() {
           <FilterField label="Collateral type" htmlFor="collateral-filter">
             <Select
               value={filters.collateral}
-              onValueChange={(value) => updateFilter('collateral', value)}
+              onValueChange={(value) => updateFilter("collateral", value)}
             >
               <SelectTrigger id="collateral-filter" className="w-full">
                 <SelectValue placeholder="Collateral type" />
@@ -236,13 +257,15 @@ export function FilingWorkspace() {
                 type="date"
                 value={filters.issuedFrom}
                 onChange={(event) =>
-                  updateFilter('issuedFrom', event.target.value)
+                  updateFilter("issuedFrom", event.target.value)
                 }
               />
               <Input
                 type="date"
                 value={filters.issuedTo}
-                onChange={(event) => updateFilter('issuedTo', event.target.value)}
+                onChange={(event) =>
+                  updateFilter("issuedTo", event.target.value)
+                }
               />
             </div>
           </FilterField>
@@ -254,13 +277,15 @@ export function FilingWorkspace() {
                 type="date"
                 value={filters.expiredFrom}
                 onChange={(event) =>
-                  updateFilter('expiredFrom', event.target.value)
+                  updateFilter("expiredFrom", event.target.value)
                 }
               />
               <Input
                 type="date"
                 value={filters.expiredTo}
-                onChange={(event) => updateFilter('expiredTo', event.target.value)}
+                onChange={(event) =>
+                  updateFilter("expiredTo", event.target.value)
+                }
               />
             </div>
           </FilterField>
@@ -269,7 +294,9 @@ export function FilingWorkspace() {
             <Input
               id="created-by-filter"
               value={filters.createdBy}
-              onChange={(event) => updateFilter('createdBy', event.target.value)}
+              onChange={(event) =>
+                updateFilter("createdBy", event.target.value)
+              }
               placeholder="Created by"
             />
           </FilterField>
@@ -282,8 +309,10 @@ export function FilingWorkspace() {
         onFilterChange={handleFilterChange}
         filtersActive={hasActiveFilters}
       />
+
+     
     </section>
-  )
+  );
 }
 
 function FilterField({
@@ -291,14 +320,14 @@ function FilterField({
   htmlFor,
   children,
 }: {
-  label: string
-  htmlFor: string
-  children: ReactNode
+  label: string;
+  htmlFor: string;
+  children: ReactNode;
 }) {
   return (
     <div className="grid gap-2">
       <Label htmlFor={htmlFor}>{label}</Label>
       {children}
     </div>
-  )
+  );
 }
