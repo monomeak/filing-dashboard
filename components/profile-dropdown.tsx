@@ -42,7 +42,7 @@ const navigationIcons = {
 };
 
 type ProfileDropdownProps = {
-  navItems?: NavigationItem[];
+  readonly navItems?: NavigationItem[];
 };
 
 export function ProfileDropdown({
@@ -103,6 +103,19 @@ export function ProfileDropdown({
     console.log("[v0] User signed out");
   };
 
+  const renderProfileStatus = (profileId: string) => {
+    if (switchingProfileId === profileId) {
+      return (
+        <LoaderCircle className="h-4 w-4 flex-shrink-0 animate-spin text-muted-foreground" />
+      );
+    }
+    if (activeProfile.id === profileId) {
+      return <Check className="h-4 w-4 flex-shrink-0 text-green-600" />;
+    }
+
+    return null;
+  };
+
   return (
     <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
@@ -122,11 +135,11 @@ export function ProfileDropdown({
               }
               alt={activeProfile.name}
             />
-            <AvatarFallback>
+            <AvatarFallback className="text-center font-semibold leading-none [&_.anticon]:flex [&_.anticon]:items-center [&_.anticon]:justify-center [&_svg]:block">
               {activeProfile.type === "personal" ? (
                 activeProfile.initials
               ) : (
-                <Building2 className="h-5 w-5" />
+                <Building2 className="flex h-5 w-5 items-center justify-center leading-none" />
               )}
             </AvatarFallback>
           </Avatar>
@@ -150,11 +163,11 @@ export function ProfileDropdown({
                     }
                     alt={activeProfile.name}
                   />
-                  <AvatarFallback>
+                  <AvatarFallback className="text-center font-semibold leading-none [&_.anticon]:flex [&_.anticon]:items-center [&_.anticon]:justify-center [&_svg]:block">
                     {activeProfile.type === "personal" ? (
                       activeProfile.initials
                     ) : (
-                      <Building2 className="h-6 w-6" />
+                      <Building2 className="flex h-7 w-7 items-center justify-center leading-none" />
                     )}
                   </AvatarFallback>
                 </Avatar>
@@ -191,9 +204,9 @@ export function ProfileDropdown({
                   <DropdownMenuItem
                     key={item.href}
                     onSelect={() => handleNavigation(item.href)}
-                    className="group flex cursor-pointer items-center gap-3 rounded-lg px-3 py-3 text-base font-medium transition-colors hover:bg-accent focus:bg-accent"
+                    className="group flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-base font-medium transition-colors hover:bg-accent focus:bg-accent"
                   >
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground leading-none transition-colors group-hover:bg-background group-hover:text-foreground">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg  text-muted-foreground leading-none transition-colors  group-hover:text-foreground">
                       <Icon className="flex h-[18px] w-[18px] items-center justify-center" />
                     </span>
                     <span>{label}</span>
@@ -207,24 +220,20 @@ export function ProfileDropdown({
             <div className="px-2.5 py-2.5 sm:py-3">
               <button
                 onClick={() => setView("switch")}
-                className="group flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-3 text-left text-base font-semibold transition-colors hover:bg-accent sm:py-2.5"
+                className="group flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-left text-base font-semibold transition-colors hover:bg-accent sm:py-2.5"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary leading-none transition-colors group-hover:bg-background">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-primary leading-none transition-colors ">
                   <Repeat className="flex h-[18px] w-[18px] items-center justify-center" />
                 </span>
 
                 <span>Switch Profile</span>
               </button>
-            </div>
 
-            <DropdownMenuSeparator className="my-1" />
-
-            <div className="px-2.5 py-2.5 sm:py-3">
               <DropdownMenuItem
                 onSelect={handleSignOut}
-                className="group flex cursor-pointer items-center gap-3 rounded-lg px-3 py-3 text-base font-semibold text-destructive transition-colors hover:bg-destructive/10 hover:text-destructive focus:bg-destructive/10 focus:text-destructive sm:py-2.5"
+                className="group flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2 text-base font-semibold text-destructive transition-colors hover:bg-destructive/10 hover:text-destructive focus:bg-destructive/10 focus:text-destructive sm:py-2.5"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-destructive/10 text-destructive leading-none">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg  text-destructive leading-none">
                   <LogOut className="flex h-[18px] w-[18px] items-center justify-center" />
                 </span>
                 <span>Sign out</span>
@@ -235,15 +244,24 @@ export function ProfileDropdown({
 
         {view === "switch" && (
           <>
-            <div className="flex items-center gap-3 border-b bg-gradient-to-r from-primary/10 to-background px-4 py-4 dark:from-primary/20 dark:to-slate-950">
-              <button
-                onClick={() => setView("menu")}
-                className="rounded-lg p-2 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                aria-label="Back to profile menu"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              <h3 className="text-base font-bold">Switch Profile</h3>
+            <div className="border-b bg-gradient-to-br from-primary/10 via-background to-primary/5 px-4 py-4 dark:from-primary/20 dark:via-slate-950 dark:to-primary/10">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setView("menu")}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-background/80 text-muted-foreground shadow-sm transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  aria-label="Back to profile menu"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Choose account
+                  </p>
+                  <h3 className="text-base font-bold leading-tight text-foreground">
+                    Switch Profile
+                  </h3>
+                </div>
+              </div>
             </div>
 
             <div className="max-h-80 overflow-y-auto px-2.5 py-3">
@@ -252,6 +270,7 @@ export function ProfileDropdown({
                   handleSwitchProfile(
                     {
                       type: "personal",
+                      id: personalProfile.id,
                       name: personalProfile.name,
                       initials: personalProfile.initials,
                     },
@@ -259,30 +278,29 @@ export function ProfileDropdown({
                   );
                 }}
                 disabled={Boolean(switchingProfileId)}
-                className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-3.5 text-base transition-colors hover:bg-accent disabled:cursor-wait disabled:opacity-70"
+                className="group flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2.5 text-base transition-colors hover:bg-accent disabled:cursor-wait disabled:opacity-70"
               >
-                <Avatar className="h-11 w-11 shadow-sm">
+                <Avatar className="h-11 w-11 shrink-0 shadow-sm ring-2 ring-background">
                   <AvatarImage
                     src={personalProfile.avatar}
                     alt={personalProfile.name}
                   />
-                  <AvatarFallback>{personalProfile.initials}</AvatarFallback>
+                  <AvatarFallback className="text-center font-semibold leading-none">
+                    {personalProfile.initials}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0 flex-1 text-left">
                   <p className="truncate font-semibold">
                     {personalProfile.name}
                   </p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm font-medium text-muted-foreground">
                     {switchingProfileId === "personal"
                       ? "Switching..."
-                      : "Personal"}
+                      : "Personal account"}
                   </p>
                 </div>
-                {switchingProfileId === "personal" ? (
-                  <LoaderCircle className="h-4 w-4 flex-shrink-0 animate-spin text-muted-foreground" />
-                ) : activeProfile.type === "personal" ? (
-                  <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
-                ) : null}
+
+                {renderProfileStatus("personal")}
               </button>
 
               {organizations.map((organization) => {
@@ -303,29 +321,24 @@ export function ProfileDropdown({
                       );
                     }}
                     disabled={Boolean(switchingProfileId)}
-                    className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-3.5 text-base transition-colors hover:bg-accent disabled:cursor-wait disabled:opacity-70"
+                    className="group flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2.5 text-base transition-colors hover:bg-accent disabled:cursor-wait disabled:opacity-70"
                   >
-                    <Avatar className="h-11 w-11 shadow-sm">
-                      <AvatarFallback className="bg-slate-100 dark:bg-slate-800">
-                        <Building2 className="h-[18px] w-[18px] text-muted-foreground" />
+                    <Avatar className="h-11 w-11 shrink-0 shadow-sm ring-2 ring-background">
+                      <AvatarFallback className="bg-primary/10 text-primary [&_.anticon]:flex [&_.anticon]:items-center [&_.anticon]:justify-center [&_svg]:block">
+                        <Building2 className="flex h-[18px] w-[18px] items-center justify-center leading-none" />
                       </AvatarFallback>
                     </Avatar>
                     <div className="min-w-0 flex-1 text-left">
                       <p className="truncate font-semibold">
                         {organization.name}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm font-medium text-muted-foreground">
                         {switchingProfileId === organization.id
                           ? "Switching..."
-                          : "Organization"}
+                          : "Organization account"}
                       </p>
                     </div>
-                    {switchingProfileId === organization.id ? (
-                      <LoaderCircle className="h-4 w-4 flex-shrink-0 animate-spin text-muted-foreground" />
-                    ) : activeProfile.type === "organization" &&
-                      activeProfile.id === organization.id ? (
-                      <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
-                    ) : null}
+                    {renderProfileStatus(organization.id)}
                   </button>
                 );
               })}
@@ -334,9 +347,9 @@ export function ProfileDropdown({
 
               <button
                 onClick={() => handleNavigation(routes.createOrganization)}
-                className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-3.5 text-base font-semibold text-primary transition-colors hover:bg-primary/10"
+                className="group flex w-full cursor-pointer items-center gap-3 rounded-lg px-2 py-2.5 text-base font-semibold text-primary transition-colors hover:bg-primary/10"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary leading-none">
                   <Plus className="h-[18px] w-[18px]" />
                 </span>
                 <span>Create Organization</span>

@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 
 import {
   type ActiveProfile,
@@ -9,28 +9,29 @@ import {
   defaultOrganizations,
   getInitials,
   personalProfile,
-} from '@/lib/profile-data'
+} from "@/lib/profile-data";
 
-const organizationsStorageKey = 'filing-app-organizations'
-const activeProfileStorageKey = 'filing-app-active-profile'
-const profileStorageEvent = 'filing-app-profile-storage'
+const organizationsStorageKey = "filing-app-organizations";
+const activeProfileStorageKey = "filing-app-active-profile";
+const profileStorageEvent = "filing-app-profile-storage";
 
 const defaultActiveProfile: ActiveProfile = {
-  type: 'personal',
+  type: "personal",
+  id: 'personal-id',
   name: personalProfile.name,
   initials: personalProfile.initials,
-}
+};
 
 function readJson<T>(key: string, fallback: T) {
-  if (typeof window === 'undefined') {
-    return fallback
+  if (typeof window === "undefined") {
+    return fallback;
   }
 
   try {
-    const value = window.localStorage.getItem(key)
-    return value ? (JSON.parse(value) as T) : fallback
+    const value = window.localStorage.getItem(key);
+    return value ? (JSON.parse(value) as T) : fallback;
   } catch {
-    return fallback
+    return fallback;
   }
 }
 
@@ -38,17 +39,18 @@ function normalizeOrganizations(organizations: Organization[]) {
   return organizations.map((organization, index) => ({
     ...organization,
     accountNumber:
-      organization.accountNumber ?? `ORG-${String(4000 + index).padStart(4, '0')}`,
-    balance: organization.balance ?? '$0.00',
+      organization.accountNumber ??
+      `ORG-${String(4000 + index).padStart(4, "0")}`,
+    balance: organization.balance ?? "$0.00",
     ownerName: organization.ownerName ?? personalProfile.name,
-  }))
+  }));
 }
 
 export function useProfiles() {
   const [organizations, setOrganizations] =
-    useState<Organization[]>(defaultOrganizations)
+    useState<Organization[]>(defaultOrganizations);
   const [activeProfile, setActiveProfile] =
-    useState<ActiveProfile>(defaultActiveProfile)
+    useState<ActiveProfile>(defaultActiveProfile);
 
   useEffect(() => {
     const syncProfiles = () => {
@@ -56,66 +58,69 @@ export function useProfiles() {
         normalizeOrganizations(
           readJson(organizationsStorageKey, defaultOrganizations),
         ),
-      )
-      setActiveProfile(readJson(activeProfileStorageKey, defaultActiveProfile))
-    }
+      );
+      setActiveProfile(readJson(activeProfileStorageKey, defaultActiveProfile));
+    };
 
-    syncProfiles()
+    syncProfiles();
 
-    window.addEventListener('storage', syncProfiles)
-    window.addEventListener(profileStorageEvent, syncProfiles)
+    window.addEventListener("storage", syncProfiles);
+    window.addEventListener(profileStorageEvent, syncProfiles);
 
     return () => {
-      window.removeEventListener('storage', syncProfiles)
-      window.removeEventListener(profileStorageEvent, syncProfiles)
-    }
-  }, [])
+      window.removeEventListener("storage", syncProfiles);
+      window.removeEventListener(profileStorageEvent, syncProfiles);
+    };
+  }, []);
 
   const notifyProfileChange = () => {
-    window.dispatchEvent(new Event(profileStorageEvent))
-  }
+    window.dispatchEvent(new Event(profileStorageEvent));
+  };
 
   const saveOrganizations = (nextOrganizations: Organization[]) => {
-    setOrganizations(nextOrganizations)
+    setOrganizations(nextOrganizations);
     window.localStorage.setItem(
       organizationsStorageKey,
       JSON.stringify(nextOrganizations),
-    )
-    notifyProfileChange()
-  }
+    );
+    notifyProfileChange();
+  };
 
   const switchProfile = (profile: ActiveProfile) => {
-    setActiveProfile(profile)
-    window.localStorage.setItem(activeProfileStorageKey, JSON.stringify(profile))
-    notifyProfileChange()
-  }
+    setActiveProfile(profile);
+    window.localStorage.setItem(
+      activeProfileStorageKey,
+      JSON.stringify(profile),
+    );
+    notifyProfileChange();
+  };
 
   const createOrganization = (name: string) => {
-    const trimmedName = name.trim()
+    const trimmedName = name.trim();
 
     if (!trimmedName) {
-      return null
+      return null;
     }
 
-    const organization = createDemoOrganization(trimmedName)
-    const nextOrganizations = [...organizations, organization]
+    const organization = createDemoOrganization(trimmedName);
+    const nextOrganizations = [...organizations, organization];
     const nextActiveProfile: ActiveProfile = {
-      type: 'organization',
+      type: "organization",
       id: organization.id,
       name: organization.name,
-      initials: getInitials(organization.name) || 'O',
-    }
+      initials: getInitials(organization.name) || "O",
+    };
 
-    saveOrganizations(nextOrganizations)
-    switchProfile(nextActiveProfile)
+    saveOrganizations(nextOrganizations);
+    switchProfile(nextActiveProfile);
 
-    return organization
-  }
+    return organization;
+  };
 
   return {
     activeProfile,
     createOrganization,
     organizations,
     switchProfile,
-  }
+  };
 }

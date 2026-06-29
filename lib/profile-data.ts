@@ -5,12 +5,17 @@ export type Organization = {
   balance: string;
   ownerName: string;
 };
+export type profileType = "personal" | "organization";
 
-export type ActiveProfile =
-  | { type: "personal"; name: string; initials: string }
-  | { type: "organization"; id: string; name: string; initials: string };
+export type ActiveProfile = {
+  type: profileType;
+  id: string;
+  name: string;
+  initials: string;
+};
 
 export const personalProfile = {
+  id: "001",
   name: "Leoniel Messi",
   accountNumber: "ACC-1001",
   balance: "$2,450.00",
